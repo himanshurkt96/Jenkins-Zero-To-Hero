@@ -1,0 +1,45 @@
+pipeline {
+    agent {
+        docker{
+            image 'abhishekf5/maven-abhishek-docker-agent:v1'
+            args '--user root -v /var/run/docker.sock:/var/run/docker.sock' // mount Docker socket to access the host's Docker daemon
+        }
+        }
+    stages{
+        stage('Code') {
+            steps {
+                sh 'echo passed'
+                url 'https://github.com/himanshurkt96/Jenkins-Zero-To-Hero.git' branch:'main'
+            }
+
+            stage('Build and test') {
+                steps {
+                sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
+                }
+            }
+
+            stage('Static Code Analysis'){
+                environment {
+                    SONAL_URL="https://52.91.206.34:9000"
+                }
+                steps {
+                    witCrendentials([string(credentialsId: 'sonarqube', variables:'SONAR_AUTH_TOKEN')])
+                    sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
+                }
+            }
+
+            stage('Build and Push and Docker Image') {
+                environment{
+                    DOCKER_IMAGE="himanshurkt96/ultimate-cicd:${BUILD_NUMBER}"
+                    DOCKERFILE_LOCATION= "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
+                  }
+
+                steps {
+                    withCredentials([usernamePassword(credentialsId: 'dockerHub',passwordVariable: 'dockerHubpassword',usernameVariable: 'dockerHubUser')])
+                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubpassword}"
+                    sh "docker push himanshurkt96/ultimate-cicd:${BUILD_NUMBER}"
+                }
+            }
+        }
+    }
+}
