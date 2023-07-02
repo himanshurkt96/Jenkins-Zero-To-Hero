@@ -11,6 +11,7 @@ pipeline {
                 sh 'echo passed'
                 url 'https://github.com/himanshurkt96/Jenkins-Zero-To-Hero.git' branch:'main'
             }
+            }
 
             stage('Build and test') {
                 steps {
