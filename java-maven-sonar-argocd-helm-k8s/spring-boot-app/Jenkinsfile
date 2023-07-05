@@ -24,9 +24,10 @@ pipeline {
                     SONAL_URL="https://3.90.70.117:9000/"
                 }
                 steps {
-                    withCredentials([string(credentialsId: 'sonarqube', variables:'SONAR_AUTH_TOKEN')])
+                    withCredentials([string(credentialsId: 'sonarqube', variables:'SONAR_AUTH_TOKEN')]) {
                     sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn sonar:sonar -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL}'
                 }
+            }
             }
 
             stage('Build and Push and Docker Image') {
@@ -36,10 +37,11 @@ pipeline {
                   }
 
                 steps {
-                    withCredentials([usernamePassword(credentialsId: 'dockerHub',passwordVariable: 'dockerHubpassword',usernameVariable: 'dockerHubUser')])
+                    withCredentials([usernamePassword(credentialsId: 'dockerHub',passwordVariable: 'dockerHubpassword',usernameVariable: 'dockerHubUser')]) {
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubpassword}"
                     sh "docker push himanshurkt96/ultimate-cicd:${BUILD_NUMBER}"
-                }
+                    }
+                    }
             }
         }
     }
