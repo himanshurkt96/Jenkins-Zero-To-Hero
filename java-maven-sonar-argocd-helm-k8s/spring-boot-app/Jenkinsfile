@@ -32,12 +32,12 @@ pipeline {
 
             stage('Build and Push and Docker Image') {
                 environment{
-                    DOCKER_IMAGE="himanshurkt96/ultimate-cicd:${BUILD_NUMBER}"
                     DOCKERFILE_LOCATION= "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
                   }
 
                 steps {
                     withCredentials([usernamePassword(credentialsId: 'dockerHub',passwordVariable: 'dockerHubpassword',usernameVariable: 'dockerHubUser')]) {
+                    sh "docker build . -t himanshurkt96/ultimate-cicd:${BUILD_NUMBER}
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubpassword}"
                     sh "docker push himanshurkt96/ultimate-cicd:${BUILD_NUMBER}"
                     }
