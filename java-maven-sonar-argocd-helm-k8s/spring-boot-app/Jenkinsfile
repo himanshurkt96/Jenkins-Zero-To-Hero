@@ -37,7 +37,7 @@ pipeline {
 
                 steps {
                     withCredentials([usernamePassword(credentialsId: 'dockerHub',passwordVariable: 'dockerHubpassword',usernameVariable: 'dockerHubUser')]) {
-                    sh "docker build . -t himanshurkt96/ultimate-cicd:${BUILD_NUMBER}
+                    sh "docker build . -t himanshurkt96/ultimate-cicd:${BUILD_NUMBER}"
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubpassword}"
                     sh "docker push himanshurkt96/ultimate-cicd:${BUILD_NUMBER}"
                     }
