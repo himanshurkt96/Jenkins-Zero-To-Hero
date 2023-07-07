@@ -37,7 +37,7 @@ pipeline {
 
                 steps {
                     withCredentials([usernamePassword(credentialsId: 'dockerHub',passwordVariable: 'dockerHubpassword',usernameVariable: 'dockerHubUser')]) {
-                    sh "docker build -f ${env.DOCKERFILE_LOCATION} -t himanshurkt96/ultimate-cicd:${BUILD_NUMBER}"
+                    sh "docker build -f ${env.DOCKERFILE_LOCATION} -t himanshurkt96/ultimate-cicd:${BUILD_NUMBER} java-maven-sonar-argocd-helm-k8s/spring-boot-app"
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubpassword}"
                     sh "docker push himanshurkt96/ultimate-cicd:${BUILD_NUMBER}"
                     }
