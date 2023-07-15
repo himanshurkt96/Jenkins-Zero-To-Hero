@@ -54,6 +54,8 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'GITHUB', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                         sh '''
+                            git config --global --unset credential.helper
+                            git config --system --unset credential.helper
                             BUILD_NUMBER=${BUILD_NUMBER}
                             git add .
                             git commit -m "Updated jar files"
